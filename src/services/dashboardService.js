@@ -1,4 +1,4 @@
-const DashboardRepository = require("../repositories/dashboardRepository");
+const DashboardRepository = require("../Repositories/dashboardRepository");
 const { Parser } = require('json2csv');
 const DashboardService = {
   // 1. Get Overview Data

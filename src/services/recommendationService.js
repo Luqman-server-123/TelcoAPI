@@ -1,7 +1,7 @@
 const axios = require('axios');
-const RecommendationRepository = require("../repositories/recommendationRepository");
-const CustomerRepository = require("../repositories/customerRepository");
-const ProductRepository = require("../repositories/productRepository");
+const RecommendationRepository = require("../Repositories/recommendationRepository");
+const CustomerRepository = require("../Repositories/customerRepository");
+const ProductRepository = require("../Repositories/productRepository");
 require('dotenv').config();
 
 const RecommendationService = {

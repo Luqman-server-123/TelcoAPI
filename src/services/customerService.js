@@ -1,4 +1,4 @@
-const CustomerRepository = require("../repositories/customerRepository");
+const CustomerRepository = require("../Repositories/customerRepository");
 const db = require("../config/database");
 
 const CustomerService = {
