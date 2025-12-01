@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { v4: uuidv4 } = require('uuid');
+
 
 const ProductRepository = {
     // 1. Get All (Search, Category, Price Range, Sort)
@@ -68,8 +68,11 @@ const ProductRepository = {
     },
 
     // 3. Create
-    create: async (data) => {
+create: async (data) => {
+        // [FIX HERE] Use Dynamic Import for Vercel stability
+        const { v4: uuidv4 } = await import('uuid'); 
         const id = uuidv4();
+
         const query = `
             INSERT INTO products (
                 id, product_code, name, category, price, description,

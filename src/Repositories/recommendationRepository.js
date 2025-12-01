@@ -1,10 +1,13 @@
 const db = require('../config/database');
-const { v4: uuidv4 } = require('uuid');
+// HAPUS: const { v4: uuidv4 } = require('uuid'); <--- HILANGKAN BARIS INI
 
 const RecommendationRepository = {
-    // 1. Simpan Header
+    // 1. Simpan Header (FIXED UUID IMPORT)
     createHeader: async (data) => {
-        const id = uuidv4();
+        // PERBAIKAN: Dynamic Import UUID
+        const { v4: uuidv4 } = await import('uuid');
+        const id = uuidv4(); 
+        
         const query = `
             INSERT INTO recommendations (
                 id, customer_id, generated_by_user_id, status, 
@@ -18,12 +21,15 @@ const RecommendationRepository = {
         return id;
     },
 
-    // 2. Simpan Items (Bulk Insert)
+    // 2. Simpan Items (Bulk Insert) (FIXED UUID IMPORT)
     createItems: async (recommendationId, items) => {
         if (items.length === 0) return;
 
+        // PERBAIKAN: Dynamic Import UUID
+        const { v4: uuidv4 } = await import('uuid');
+        
         const values = items.map(item => [
-            uuidv4(), 
+            uuidv4(), // Dipanggil di sini
             recommendationId, 
             item.product_id, 
             item.rank_order, 
@@ -79,6 +85,8 @@ const RecommendationRepository = {
         const [rows] = await db.query(query, params);
         return rows;
     },
+    
+    // 5. Override Recommendation (Update)
     override: async (id, data) => {
         const query = `
             UPDATE recommendations 
@@ -90,7 +98,6 @@ const RecommendationRepository = {
         `;
         await db.query(query, [data.product_id, data.override_reason, id]);
         
-        // Return data terbaru setelah update
         return await RecommendationRepository.findById(id);
     }
 };

@@ -1,6 +1,5 @@
 // src/repositories/userRepository.js
 const db = require('../config/database');
-const { v4: uuidv4 } = require('uuid');
 
 const UserRepository = {
     // 1. Search & Paginate
@@ -47,20 +46,22 @@ const UserRepository = {
     },
 
     // 2. Create User
+    // 2. Create User
     create: async (data) => {
+        // PERBAIKAN: Gunakan Dynamic Import untuk mendapatkan uuidv4()
+        const { v4: uuidv4 } = await import('uuid'); 
+        
         const id = uuidv4(); 
         const query = `
-            INSERT INTO users (id, name, email, password, role, status, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
-        `;
-        const role = data.role || 'staff'; 
-        const status = data.status || 'active';
-
+             INSERT INTO users (id, name, email, password, role, status, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+         `;
+        // ... kode lama
+        
         await db.query(query, [
             id, data.name, data.email, data.password, role, status
         ]);
         
-        // Panggil fungsi findById di bawah
         return await UserRepository.findById(id);
     },
 
