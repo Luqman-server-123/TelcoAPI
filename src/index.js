@@ -11,6 +11,17 @@ const PORT = process.env.PORT || 8000; // Pastikan port aman (bukan 5000)
 app.use(cors()); // Biar bisa diakses dari Frontend/Postman beda origin
 app.use(express.json()); // Supaya bisa baca JSON body
 app.use(express.urlencoded({ extended: true }));
+
+// --- Base URL Endpoint ---
+app.get('/', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'Welcome to TelcoAPI',
+        base_url: `http://localhost:${PORT}/api/v1`,
+        meta: { timestamp: new Date().toISOString(), version: '1.0' }
+    });
+});
+
 // --- API Routes ---
 app.use('/api/v1', apiRoutes);
 
