@@ -5,7 +5,7 @@ const UserRepository = {
     // 1. Search & Paginate
     searchAndPaginate: async (search, role, page = 1, perPage = 10) => {
         const offset = (page - 1) * perPage;
-        
+
         let conditions = [];
         let params = [];
 
@@ -26,8 +26,7 @@ const UserRepository = {
 
         const queryParams = [...params, parseInt(perPage), parseInt(offset)];
         const sqlData = `SELECT * FROM users ${whereClause} LIMIT ? OFFSET ?`;
-        
-        // PENTING: Langsung db.query karena config kamu sudah pool.promise()
+
         const [rows] = await db.query(sqlData, queryParams);
 
         const sqlCount = `SELECT COUNT(*) as total FROM users ${whereClause}`;
@@ -46,22 +45,31 @@ const UserRepository = {
     },
 
     // 2. Create User
-    // 2. Create User
     create: async (data) => {
-        // PERBAIKAN: Gunakan Dynamic Import untuk mendapatkan uuidv4()
+        // Import 'uuid' secara dinamis, disarankan menggunakan require/static import 
+        // jika node version mendukung, tapi kita ikuti format dari kode aslinya.
         const { v4: uuidv4 } = await import('uuid'); 
-        
+
         const id = uuidv4(); 
+        
+        // PASTIKAN SEMUA NILAI DIAMBIL DARI OBJEK DATA
+        // data.status diambil dari UserService, atau kita beri default 'active'
+        const userStatus = data.status || 'active'; 
+
         const query = `
              INSERT INTO users (id, name, email, password, role, status, created_at, updated_at) 
              VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
          `;
-        // ... kode lama
-        
+
         await db.query(query, [
-            id, data.name, data.email, data.password, role, status
+            id, 
+            data.name, 
+            data.email, 
+            data.password, 
+            data.role,     // <-- Sudah diperbaiki, ambil dari data.role
+            userStatus     // <-- Sudah diperbaiki, ambil dari data.status (default 'active')
         ]);
-        
+
         return await UserRepository.findById(id);
     },
 
@@ -88,13 +96,13 @@ const UserRepository = {
                 values.push(data[key]);
             }
         });
-        
+
         fields.push('updated_at = NOW()');
         if (fields.length === 0) return null;
         values.push(id); 
 
         const query = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
-        
+
         await db.query(query, values);
 
         return await UserRepository.findById(id);
