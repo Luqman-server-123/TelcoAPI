@@ -17,7 +17,6 @@ app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
         message: 'Welcome to TelcoAPI',
-        base_url: `http://localhost:${PORT}/api/v1`,
         meta: { timestamp: new Date().toISOString(), version: '1.0' }
     });
 });
